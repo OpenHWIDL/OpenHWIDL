@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Copyright (c) 2019, Clément Lansmarie / OpenHWIDL
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+* Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+$openHWIDL$
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:simpleType name="nameType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[a-zA-Z][a-zA-Z0-9_]*(::[a-zA-Z][a-zA-Z0-9_]*)*"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="registerWidthType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:enumeration value="8"/>
+            <xsd:enumeration value="16"/>
+            <xsd:enumeration value="24"/> <!-- Only needed for some atmega chips' stack pointer -->
+            <xsd:enumeration value="32"/>
+            <xsd:enumeration value="64"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="modeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="RO"/>
+            <xsd:enumeration value="RW"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="maskType">
+        <xsd:restriction base="xsd:string">
+            <!--
+            This pattern support:
+            - binary (0b prefix)
+            - hexadecimal (0x prefix)
+            - octal (0 prefix)
+            - decimal
+            - -1 (minus one) as a shortcut for every bits set
+            -->
+            <xsd:pattern value="0b[01]+|0x[a-fA-F0-9]+|0[0-7]+|[1-9][0-9]*|0|-1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="addressType">
+        <xsd:restriction base="xsd:string">
+            <!--
+            This pattern support:
+            - hexadecimal (0x prefix)
+            - 0 and NULL
+            -->
+            <xsd:pattern value="0x[a-fA-F0-9]+|0|NULL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ctypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="int8_t"/>
+            <xsd:enumeration value="uint8_t"/>
+            <xsd:enumeration value="int16_t"/>
+            <xsd:enumeration value="uint16_t"/>
+            <!-- 24-bit integers are only available on some platforms like AVR -->
+            <xsd:enumeration value="int24_t"/>
+            <xsd:enumeration value="uint24_t"/>
+            <xsd:enumeration value="int32_t"/>
+            <xsd:enumeration value="uint32_t"/>
+            <xsd:enumeration value="float"/>
+            <xsd:enumeration value="double"/>
+            <xsd:enumeration value="void*"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="description" type="xsd:string"/>
+    <xsd:attribute name="name" type="nameType"/>
+    <xsd:attribute name="type" type="nameType"/>
+    <xsd:attribute name="width" type="registerWidthType"/>
+    <xsd:attribute name="mode" type="modeType"/>
+    <xsd:attribute name="offset" type="xsd:integer"/>
+    <xsd:attribute name="mask" type="maskType"/>
+    <xsd:attribute name="address" type="addressType"/>
+
+    <xsd:element name="include">
+        <xsd:complexType>
+            <xsd:attribute name="location" type="xsd:anyURI"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
